@@ -1,0 +1,17 @@
+{
+  "name": "gh-profile-card-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Formulario de perfil de GitHub que genera una card. Base del taller de gh CLI + Playwright.",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}

@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GitHub Profile Card</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>🐙</text></svg>" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <h1>GitHub Profile Card</h1>
+        <p class="topbar__sub">Completa el formulario y genera la card del perfil</p>
+      </div>
+    </header>
+
+    <main class="layout">
+      <!-- ========================= FORMULARIO ========================= -->
+      <section class="panel" aria-labelledby="form-title">
+        <h2 id="form-title">Formulario</h2>
+
+        <form id="profile-form" novalidate>
+          <fieldset class="field-group">
+            <legend>Identidad</legend>
+
+            <div class="field">
+              <label for="login">Usuario de GitHub <span class="req">*</span></label>
+              <input id="login" name="login" type="text" required autocomplete="off" spellcheck="false" placeholder="octocat" />
+            </div>
+
+            <div class="field">
+              <label for="name">Nombre</label>
+              <input id="name" name="name" type="text" autocomplete="off" placeholder="The Octocat" />
+            </div>
+
+            <div class="field">
+              <label for="avatarUrl">URL del avatar</label>
+              <input id="avatarUrl" name="avatarUrl" type="url" autocomplete="off" spellcheck="false" placeholder="https://avatars.githubusercontent.com/..." />
+            </div>
+
+            <div class="field">
+              <label for="bio">Biografia</label>
+              <textarea id="bio" name="bio" rows="3" placeholder="De que te ocupas"></textarea>
+            </div>
+          </fieldset>
+
+          <fieldset class="field-group">
+            <legend>Contexto</legend>
+
+            <div class="grid-2">
+              <div class="field">
+                <label for="company">Empresa</label>
+                <input id="company" name="company" type="text" autocomplete="organization" placeholder="@microsoft" />
+              </div>
+
+              <div class="field">
+                <label for="location">Ubicacion</label>
+                <input id="location" name="location" type="text" autocomplete="address-level2" placeholder="Ciudad, Pais" />
+              </div>
+
+              <div class="field">
+                <label for="blog">Sitio web</label>
+                <input id="blog" name="blog" type="text" autocomplete="url" spellcheck="false" placeholder="https://tu-sitio.dev" />
+              </div>
+
+              <div class="field">
+                <label for="twitter">Twitter / X</label>
+                <input id="twitter" name="twitter" type="text" autocomplete="off" spellcheck="false" placeholder="usuario" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="languages">Lenguajes principales</label>
+              <input id="languages" name="languages" type="text" autocomplete="off" placeholder="TypeScript, CSS, Python" />
+              <small class="hint">Separados por coma.</small>
+            </div>
+          </fieldset>
+
+          <fieldset class="field-group">
+            <legend>Metricas</legend>
+
+            <div class="grid-3">
+              <div class="field">
+                <label for="followers">Seguidores</label>
+                <input id="followers" name="followers" type="number" min="0" step="1" value="0" />
+              </div>
+
+              <div class="field">
+                <label for="following">Siguiendo</label>
+                <input id="following" name="following" type="number" min="0" step="1" value="0" />
+              </div>
+
+              <div class="field">
+                <label for="publicRepos">Repos publicos</label>
+                <input id="publicRepos" name="publicRepos" type="number" min="0" step="1" value="0" />
+              </div>
+            </div>
+
+            <label class="check" for="hireable">
+              <input id="hireable" name="hireable" type="checkbox" />
+              <span>Abierto a colaboraciones / contratacion</span>
+            </label>
+          </fieldset>
+
+<p class="form-error" id="form-error" role="alert" hidden></p>
+
+          <div class="actions">
+            <button type="submit" id="submit-btn" class="btn btn--primary">Generar card</button>
+            <button type="reset" id="reset-btn" class="btn btn--ghost">Limpiar</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- ============================ CARD ============================ -->
+      <section class="panel panel--card" aria-labelledby="card-title">
+        <h2 id="card-title">Resultado</h2>
+
+        <div class="card-stage">
+          <p class="empty" id="empty-state">
+            Completa el formulario y pulsa <strong>Generar card</strong>.
+          </p>
+
+          <article class="profile-card" id="profile-card" data-state="idle" hidden aria-live="polite">
+            <div class="profile-card__side">
+              <div class="avatar">
+                <img id="card-avatar" alt="" />
+                <span id="card-initials" aria-hidden="true"></span>
+              </div>
+              <span class="badge badge--hireable" id="card-hireable" hidden>hireable</span>
+            </div>
+
+            <div class="profile-card__main">
+              <h3 id="card-name">&nbsp;</h3>
+              <a id="card-login" class="handle" target="_blank" rel="noopener noreferrer"></a>
+              <p id="card-bio" class="bio"></p>
+
+              <ul id="card-meta" class="chips"></ul>
+              <ul id="card-languages" class="chips chips--lang"></ul>
+
+              <dl id="card-stats" class="stats">
+                <div class="stat"><dt>Seguidores</dt><dd id="stat-followers">0</dd></div>
+                <div class="stat"><dt>Siguiendo</dt><dd id="stat-following">0</dd></div>
+                <div class="stat"><dt>Repos</dt><dd id="stat-repos">0</dd></div>
+              </dl>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Formulario + Card de perfil de GitHub</span>
+      <span id="footer-status"></span>
+    </footer>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>

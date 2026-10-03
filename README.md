@@ -202,9 +202,77 @@ jobs:
 
 
 3. **Suscripción y permisos:**
-* Acceso de lectura/escritura a un repositorio de prueba para la ejecución en vivo.
-* Cuenta activa de Azure (opcional, para la demo del servidor Azure MCP).
+   * Acceso de lectura/escritura a un repositorio de prueba para la ejecución en vivo.
+   * Cuenta activa de Azure (opcional, para la demo del servidor Azure MCP).
 
+
+
+---
+
+## 🧩 Demo en Vivo: `GitHub Profile Card` (`labs/gh-profile-card`)
+
+Aplicación web mínima (**Express + HTML/CSS/JS puro**) que actúa como banco de pruebas para el **Nivel 1**. Incluye únicamente la capa web: el formulario y la card resultante. La obtención de datos con `gh` CLI y el llenado automático con Playwright se construyen en vivo durante el taller.
+
+### Puesta en marcha
+
+```bash
+cd labs/gh-profile-card
+npm install
+npm start        # http://localhost:3000
+```
+
+| Script            | Descripción                              |
+| ----------------- | ---------------------------------------- |
+| `npm start`       | Levanta el servidor (Express).           |
+| `npm run dev`     | Servidor con recarga (`node --watch`).   |
+
+### Estructura
+
+```
+labs/gh-profile-card/
+├── server.js              Servidor Express (solo archivos estáticos)
+├── public/
+│   ├── index.html         Formulario y card
+│   ├── styles.css         Estilos
+│   └── app.js             Lectura del formulario, validación y render de la card
+└── package.json
+```
+
+### Campos del formulario
+
+Cada campo tiene un `id` estable y coincide 1:1 con un campo de la API de GitHub, para que el mapeo desde `gh` sea directo:
+
+| Campo          | `id`          | Tipo                  | Origen en la API                          |
+| -------------- | ------------- | --------------------- | ----------------------------------------- |
+| Usuario        | `login`       | texto (obligatorio)   | `user.login`                              |
+| Nombre         | `name`        | texto                 | `user.name`                               |
+| URL del avatar | `avatarUrl`   | url                   | `user.avatar_url`                         |
+| Biografía      | `bio`         | texto multilínea      | `user.bio`                                |
+| Empresa        | `company`     | texto                 | `user.company`                            |
+| Ubicación      | `location`    | texto                 | `user.location`                           |
+| Sitio web      | `blog`        | texto                 | `user.blog`                               |
+| Twitter / X    | `twitter`     | texto                 | `user.twitter_username`                   |
+| Lenguajes      | `languages`   | texto (con comas)     | agregado desde `users/{login}/repos`      |
+| Seguidores     | `followers`   | número                | `user.followers`                          |
+| Siguiendo      | `following`   | número                | `user.following`                          |
+| Repos públicos | `publicRepos` | número                | `user.public_repos`                       |
+| Hireable       | `hireable`    | checkbox              | `user.hireable`                           |
+
+Al enviar el formulario, la card se renderiza en el panel derecho con avatar (o iniciales de fallback), biografía, *chips* de contexto, lenguajes y métricas. El botón **Limpiar** oculta la card y restablece los valores por defecto.
+
+### Puntos de extensión (lo que se arma en el taller)
+
+1. **Extracción con `gh` CLI** — filtrar en origen para no gastar tokens:
+   ```bash
+   gh api user --jq '{login,name,bio,company,location,blog,avatar_url,twitter_username,followers,following,public_repos,hireable}'
+
+   gh api "users/$LOGIN/repos?per_page=100" \
+     --jq '[.[].language | select(. != null)] | group_by(.) | map({l: .[0], n: length}) | sort_by(-.n) | .[0:3]'
+   ```
+2. **Endpoint en el servidor** — `GET /api/profile?login=<usuario>` ejecutando `gh` con `child_process.execFile` y un arreglo de argumentos (evita por completo los errores de *quoting* de PowerShell con `--jq`).
+3. **Automatización con Playwright** — un script que recorra los `id` del formulario, envíe el `submit` y verifique que la card quedó renderizada (`#profile-card[data-state="ready"]`), y cierre con un screenshot como evidencia.
+
+> **Trampa común:** si la clase de estilos del componente define `display` (por ejemplo `display: grid`), anula el atributo `hidden` del navegador. Agrega `[hidden] { display: none !important; }` a la hoja de estilos.
 
 
 ---
